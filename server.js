@@ -40,11 +40,14 @@ app.post('/gallery', function (req, res) {
   });
 });
 
-app.put('/gallery/:id', function (req, res) {
+app.put(/\/gallery\/\d+/, function (req, res) {
   req.on('data', function (chunk) {
     var data = chunk.toString();
     var info = querystring.parse(data);
-    res.send('Editing a new photo ' + info.author + ' ' + info.url + ' ' + info.description);
+    var urlSplit = req.url.split(/\/gallery\//);
+    var numID = urlSplit[1];
+    console.log(info);
+    Gallery.edit(numID, info, res);
   });
 });
 
