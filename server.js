@@ -14,8 +14,9 @@ app.get('/', function(req, res){
 });
 
 app.get(/\/gallery\/\d+/, function(req, res){
-  console.log('image view request');
-  res.send('you are viewing ' + req.url);
+  var urlSplit = req.url.split(/\/gallery\//);
+  var numID = urlSplit[1];
+  Gallery.view(numID, res);
 });
 
 app.get('/gallery/new', function(req, res){
@@ -47,8 +48,10 @@ app.put('/gallery/:id', function (req, res) {
   });
 });
 
-app.delete('/gallery/:id', function (req, res) {
-  res.send('Deleting photo ' + req.params.id);
+app.delete(/\/gallery\/\d+/, function (req, res) {
+  var urlSplit = req.url.split(/\/gallery\//);
+  var numID = urlSplit[1];
+  Gallery.delete(numID, res);
 });
 
 // app.route('/book')

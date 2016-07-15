@@ -3,7 +3,9 @@ var path = require('path');
 var FILEPATH = path.resolve('data', 'gallery.json');
 module.exports = {
   create:addgallery,
-  display:displayGallery
+  display:displayGallery,
+  view: seePicture,
+  delete:deleteGallery
 };
 
 function addgallery(chunk, callback){
@@ -12,15 +14,23 @@ function addgallery(chunk, callback){
       throw err;
     var galleries = JSON.parse(DATAFILE);
     galleries.push(chunk);
-    console.log(galleries);
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
       callback(err, chunk);
     });
   });
 }
 
-function deletegallery(){
-
+function deleteGallery(id, res){
+   fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
+    if(err)
+      throw err;
+    var galleries = JSON.parse(DATAFILE);
+    galleries.splice(id, 1);
+    console.log(galleries);
+    fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
+    });
+    res.render('index', { pictures: galleries});
+  });
 }
 
 function displayGallery(res){
@@ -36,6 +46,11 @@ function editgallery(){
 
 }
 
-function seePicture(id){
-  console.log(id);
+function seePicture(id,res){
+   fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
+    if(err)
+      throw err;
+    var galleries = JSON.parse(DATAFILE);
+    res.render('gallery', { num:id,url: galleries[id].url, author: galleries[id].author, description:galleries[id].description});
+  });
 }

@@ -1,12 +1,11 @@
 html
   head
-    title= title
+    title Gallery Index
   body
-    h1= message
-    if(new Date().getHours() >= 17)
-      h2 Good Evening!
-    ul
-      each picture, index in pictures
-        img(src=picture.url id=index href="http://google.com")
+    h1 Gallery Index
+    each picture, index in pictures
+      div
+        a(href="/gallery/" + index)
+          img(src=picture.url id=index)
         p= 'Uploaded by' + picture.author
         p= picture.description
