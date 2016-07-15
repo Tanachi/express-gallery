@@ -1,16 +1,25 @@
 var express = require('express');
+var path = require('path');
+var bodyParser = require('body-parser');
+var Gallery = require('./Gallery');
 var querystring = require('querystring');
+var fs = require('fs');
 var app = express();
+var FILEPATH = path.resolve('data', 'gallery.json');
+app.set('views', path.resolve(__dirname, 'views'));
+app.set('view engine', 'pug');
+var vistorCount = 0;
 app.get('/', function(req, res){
-  res.send('View list of galleries');
+  Gallery.display(res);
 });
 
-app.get('/gallery/:id', function(req, res){
-  res.send('you are viewing ' + req.params.id);
+app.get(/\/gallery\/\d+/, function(req, res){
+  console.log('image view request');
+  res.send('you are viewing ' + req.url);
 });
 
 app.get('/gallery/new', function(req, res){
-  res.send('new photo');
+  res.render('new');
 });
 
 app.get('/gallery/:id/edit', function(req, res){
@@ -22,15 +31,19 @@ app.post('/gallery', function (req, res) {
   req.on('data', function (chunk) {
     var data = chunk.toString();
     var info = querystring.parse(data);
-    res.send('posting a new photo ' + info.author + ' ' + info.url + ' ' + info.description);
+    Gallery.create(info, function(err, result) {
+      if(err)
+        throw err;
+      res.render('gallery', result);
+    });
   });
 });
 
-app.put('/gallry/:id', function (req, res) {
+app.put('/gallery/:id', function (req, res) {
   req.on('data', function (chunk) {
     var data = chunk.toString();
     var info = querystring.parse(data);
-    res.send('posting a new photo ' + info.author + ' ' + info.url + ' ' + info.description);
+    res.send('Editing a new photo ' + info.author + ' ' + info.url + ' ' + info.description);
   });
 });
 

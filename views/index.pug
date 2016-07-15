@@ -1,0 +1,12 @@
+html
+  head
+    title= title
+  body
+    h1= message
+    if(new Date().getHours() >= 17)
+      h2 Good Evening!
+    ul
+      each picture, index in pictures
+        img(src=picture.url id=index href="http://google.com")
+        p= 'Uploaded by' + picture.author
+        p= picture.description

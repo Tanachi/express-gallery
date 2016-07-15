@@ -1,0 +1,13 @@
+html
+  head
+    title New Gallery Image
+  body
+    h1 New Gallery Image
+    form(type= 'x-www-form-urlencoded' method='POST' action='/gallery')
+      | author:
+      input(type= "text" name="author")
+      | url:
+      input(type= "text" name="url")
+      | description:
+      textarea(name="description")
+      input(type='submit', value='Submit')
