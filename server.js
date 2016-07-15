@@ -13,6 +13,11 @@ app.get('/', function(req, res){
   Gallery.display(res);
 });
 
+
+app.get(/\/gallery\/\d+\/edit/, function(req, res){
+  res.send('you are editing ' + req.url);
+});
+
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
@@ -20,11 +25,8 @@ app.get(/\/gallery\/\d+/, function(req, res){
 });
 
 app.get('/gallery/new', function(req, res){
+  console.log('kirby');
   res.render('new');
-});
-
-app.get('/gallery/:id/edit', function(req, res){
-  res.send('you are editing ' + req.params.id);
 });
 
 
@@ -54,7 +56,11 @@ app.put(/\/gallery\/\d+/, function (req, res) {
 app.delete(/\/gallery\/\d+/, function (req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  Gallery.delete(numID, res);
+  Gallery.delete(numID, function(err, result) {
+    if(err)
+      throw err;
+    res.render('index', { pictures: result});
+  });
 });
 
 // app.route('/book')

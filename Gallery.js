@@ -16,12 +16,11 @@ function addgallery(chunk, callback){
     var galleries = JSON.parse(DATAFILE);
     galleries.push(chunk);
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
-      callback(err, chunk);
     });
   });
 }
 
-function deleteGallery(id, res){
+function deleteGallery(id, callback){
    fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
     if(err)
       throw err;
@@ -34,8 +33,8 @@ function deleteGallery(id, res){
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
       if(err)
         throw err;
+      callback(err, galleries);
     });
-    res.render('index', { pictures: galleries});
   });
 }
 
