@@ -1,0 +1,18 @@
+doctype html
+html(lang='en')
+html
+  head
+    meta(charset='UTF-8')
+    title Edit Image
+  body
+    img(src=url id=num)
+    p= 'Uploaded by ' + author
+    p= description
+  form(type= 'x-www-form-urlencoded' method='PUT' action='/gallery/' + num)
+    | author:
+    input(type= "text" name="author")
+    | url:
+    input(type= "text" name="url")
+    | description:
+    textarea(name="description")
+    input(type='submit', value='Submit')

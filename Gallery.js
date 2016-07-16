@@ -16,6 +16,7 @@ function addgallery(chunk, callback){
     var galleries = JSON.parse(DATAFILE);
     galleries.push(chunk);
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
+      callback(err, chunk);
     });
   });
 }
@@ -38,20 +39,16 @@ function deleteGallery(id, callback){
   });
 }
 
-function displayGallery(res){
+function displayGallery(callback){
   fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
     if(err)
       throw err;
     var galleries = JSON.parse(DATAFILE);
-    if(galleries.length < id){
-      var badErr = new Error('id is greater than index');
-      return badErr;
-    }
-    res.render('index', { pictures: galleries});
+    callback(err, galleries);
   });
 }
 
-function editGallery(id, chunk, res){
+function editGallery(id, chunk, callback){
    fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
     if(err)
       throw err;
@@ -63,16 +60,15 @@ function editGallery(id, chunk, res){
     galleries[id].url = chunk.url;
     galleries[id].author = chunk.author;
     galleries[id].description = chunk.description;
-    console.log(galleries);
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
       if(err)
         throw err;
+      callback(err, chunk);
     });
-    res.render('gallery', { num:id,url: galleries[id].url, author: galleries[id].author, description:galleries[id].description});
   });
 }
 
-function seePicture(id,res){
+function seePicture(id,callback){
    fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
     if(err)
       throw err;
@@ -81,6 +77,12 @@ function seePicture(id,res){
       var badErr = new Error('id is greater than index');
       return badErr;
     }
-    res.render('gallery', { num:id,url: galleries[id].url, author: galleries[id].author, description:galleries[id].description});
+    console.log(id);
+    var chunk = {
+      url:galleries[id].url,
+      author:galleries[id].author,
+      description:galleries.description
+    };
+    callback(err, chunk);
   });
 }

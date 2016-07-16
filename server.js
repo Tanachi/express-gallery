@@ -19,7 +19,13 @@ app.get('/', function(req, res){
 
 
 app.get(/\/gallery\/\d+\/edit/, function(req, res){
-  res.send('you are editing ' + req.url);
+  var split = req.url.split('/');
+  var numID = split[2];
+  Gallery.view(numID, function(err, result){
+    if(err)
+      throw err;
+    res.render('edit', { num:numID,url: result.url, author: result.author, description:result.description});
+  });
 });
 
 app.get(/\/gallery\/\d+/, function(req, res){
