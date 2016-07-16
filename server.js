@@ -10,7 +10,11 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'pug');
 var vistorCount = 0;
 app.get('/', function(req, res){
-  Gallery.display(res);
+  Gallery.display(function(err, result){
+    if(err)
+      throw err;
+    res.render('index', {pictures: result});
+  });
 });
 
 
@@ -21,11 +25,14 @@ app.get(/\/gallery\/\d+\/edit/, function(req, res){
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  Gallery.view(numID, res);
+  Gallery.view(numID, function(err, result){
+    if(err)
+      throw err;
+    res.render('gallery', { num:numID,url: result.url, author: result.author, description:result.description});
+  });
 });
 
 app.get('/gallery/new', function(req, res){
-  console.log('kirby');
   res.render('new');
 });
 
@@ -48,8 +55,11 @@ app.put(/\/gallery\/\d+/, function (req, res) {
     var info = querystring.parse(data);
     var urlSplit = req.url.split(/\/gallery\//);
     var numID = urlSplit[1];
-    console.log(info);
-    Gallery.edit(numID, info, res);
+    Gallery.edit(numID, info, function(err, result){
+      if(err)
+        throw err;
+      res.render('gallery', { num:numID,url: result.url, author: result.author, description:result.description});
+    });
   });
 });
 
