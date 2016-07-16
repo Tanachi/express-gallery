@@ -16,7 +16,13 @@ function addgallery(chunk, callback){
     var galleries = JSON.parse(DATAFILE);
     galleries.push(chunk);
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
-      callback(err, chunk);
+      var info = {
+        url: chunk.url,
+        author: chunk.author,
+        description: chunk. description,
+        id: galleries.length - 1
+      };
+      callback(err, info);
     });
   });
 }
@@ -72,16 +78,28 @@ function seePicture(id,callback){
    fs.readFile(FILEPATH, 'utf8', function(err, DATAFILE){
     if(err)
       throw err;
+    var numID;
+    if(isNaN(id)){
+      var myRegexp = /(\d)\?/;
+      var match = myRegexp.exec(id);
+      if(match !== null){
+        numID = match[1];
+      }
+    }
+    else{
+      numID = id;
+    }
+
     var galleries = JSON.parse(DATAFILE);
-    if(galleries.length < id){
+    if(galleries.length < numID){
       var badErr = new Error('id is greater than index');
       return badErr;
     }
-    console.log(id);
+    console.log(numID);
     var chunk = {
-      url:galleries[id].url,
-      author:galleries[id].author,
-      description:galleries.description
+      url:galleries[numID].url,
+      author:galleries[numID].author,
+      description:galleries[numID].description
     };
     callback(err, chunk);
   });

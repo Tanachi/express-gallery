@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
 var Gallery = require('./Gallery');
 var querystring = require('querystring');
 var fs = require('fs');
@@ -9,6 +10,39 @@ var FILEPATH = path.resolve('data', 'gallery.json');
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'pug');
 var vistorCount = 0;
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+app.use(urlencodedParser, methodOverride(function(req, res){
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    var method = req.body._method;
+    delete req.body._method;
+    return method;
+  }
+}));
+app.put(/\/gallery\/\d+/, function (req, res) {
+  req.on('data', function (chunk) {
+    var data = chunk.toString();
+    var info = querystring.parse(data);
+    var urlSplit = req.url.split(/\/gallery\//);
+    var numID = urlSplit[1];
+    Gallery.edit(numID, info, function(err, result){
+      if(err)
+        throw err;
+      res.render('gallery', { num:numID,url: result.url, author: result.author, description:result.description});
+    });
+  });
+});
+
+app.delete(/\/gallery\/\d+/, function (req, res) {
+  var urlSplit = req.url.split(/\/gallery\//);
+  var numID = urlSplit[1];
+  Gallery.delete(numID, function(err, result) {
+    if(err)
+      throw err;
+    res.render('index', { pictures: result});
+  });
+});
+
 app.get('/', function(req, res){
   Gallery.display(function(err, result){
     if(err)
@@ -50,34 +84,12 @@ app.post('/gallery', function (req, res) {
     Gallery.create(info, function(err, result) {
       if(err)
         throw err;
-      res.render('gallery', result);
+      res.render('gallery', { num:result.id,url: result.url, author: result.author, description:result.description});
     });
   });
 });
 
-app.put(/\/gallery\/\d+/, function (req, res) {
-  req.on('data', function (chunk) {
-    var data = chunk.toString();
-    var info = querystring.parse(data);
-    var urlSplit = req.url.split(/\/gallery\//);
-    var numID = urlSplit[1];
-    Gallery.edit(numID, info, function(err, result){
-      if(err)
-        throw err;
-      res.render('gallery', { num:numID,url: result.url, author: result.author, description:result.description});
-    });
-  });
-});
 
-app.delete(/\/gallery\/\d+/, function (req, res) {
-  var urlSplit = req.url.split(/\/gallery\//);
-  var numID = urlSplit[1];
-  Gallery.delete(numID, function(err, result) {
-    if(err)
-      throw err;
-    res.render('index', { pictures: result});
-  });
-});
 
 // app.route('/book')
 //   .get(function (req, res) {
