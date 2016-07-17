@@ -63,9 +63,13 @@ function editGallery(id, chunk, callback){
       var badErr = new Error('id is greater than index');
       return badErr;
     }
-    galleries[id].url = chunk.url;
-    galleries[id].author = chunk.author;
-    galleries[id].description = chunk.description;
+    console.log(galleries[id]);
+    if(chunk.url !== '')
+      galleries[id].url = chunk.url;
+    if(chunk.author !== '')
+      galleries[id].author = chunk.author;
+    if(chunk.description !== '')
+      galleries[id].description = chunk.description;
     fs.writeFile(FILEPATH, JSON.stringify(galleries), 'utf8', function(err){
       if(err)
         throw err;

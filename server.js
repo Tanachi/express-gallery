@@ -14,22 +14,18 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(urlencodedParser, methodOverride(function(req, res){
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    console.log('hello');
     var method = req.body._method;
     delete req.body._method;
     return method;
   }
 }));
+
 app.put(/\/gallery\/\d+/, function (req, res) {
-  req.on('data', function (chunk) {
-    var data = chunk.toString();
-    var info = querystring.parse(data);
-    var urlSplit = req.url.split(/\/gallery\//);
-    var numID = urlSplit[1];
-    Gallery.edit(numID, info, function(err, result){
+  Gallery.edit(req.body._id, req.body, function(err, result){
       if(err)
         throw err;
-      res.render('gallery', { num:numID,url: result.url, author: result.author, description:result.description});
-    });
+    res.render('gallery', { num:req.body._id,url: result.url, author: result.author, description:result.description});
   });
 });
 
@@ -78,14 +74,10 @@ app.get('/gallery/new', function(req, res){
 
 
 app.post('/gallery', function (req, res) {
-  req.on('data', function (chunk) {
-    var data = chunk.toString();
-    var info = querystring.parse(data);
-    Gallery.create(info, function(err, result) {
-      if(err)
-        throw err;
-      res.render('gallery', { num:result.id,url: result.url, author: result.author, description:result.description});
-    });
+  Gallery.create(req.body, function(err, result) {
+    if(err)
+      throw err;
+    res.render('gallery', { num:result.id,url: result.url, author: result.author, description:result.description});
   });
 });
 
