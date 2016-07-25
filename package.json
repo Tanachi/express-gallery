@@ -20,6 +20,9 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^4.2.0",
+    "gulp-sass": "^2.3.2",
     "method-override": "^2.3.6",
     "pg": "^6.0.3",
     "pug": "^2.0.0-beta4",
