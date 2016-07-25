@@ -5,11 +5,16 @@ var methodOverride = require('method-override');
 var Gallery = require('./Gallery');
 var querystring = require('querystring');
 var fs = require('fs');
+var db = require('./models');
 var app = express();
 var FILEPATH = path.resolve('data', 'gallery.json');
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
+var Gallery = db.Gallery;
+
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'pug');
-var vistorCount = 0;
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(urlencodedParser, methodOverride(function(req, res){
@@ -22,28 +27,39 @@ app.use(urlencodedParser, methodOverride(function(req, res){
 }));
 
 app.put(/\/gallery\/\d+/, function (req, res) {
-  Gallery.edit(req.body._id, req.body, function(err, result){
-      if(err)
-        throw err;
-    res.render('gallery', { num:req.body._id,url: result.url, author: result.author, description:result.description});
+  var urlSplit = req.url.split(/\/gallery\//);
+  var numID = urlSplit[1];
+  Gallery.find({id:numID}).then(function(gallery) {
+    // now you see me...
+  return Gallery.update({
+    author: req.author,
+    url: req.url,
+    description: req.description
+  });
+  }).then(function(gallery) {
+    res.render('gallery', { num:gallery.id,url: req.body.url, author: req.body.author, description:req.body.description});
   });
 });
 
 app.delete(/\/gallery\/\d+/, function (req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  Gallery.delete(numID, function(err, result) {
-    if(err)
-      throw err;
-    res.render('index', { pictures: result});
+  console.log(numID);
+  Gallery.findOne({where:{id:numID}}).then(function(gallery) {
+    // now you see me...
+  return gallery.destroy();
+  }).then(function() {
+    Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+      .then(function (gallery) {
+        res.render('index', {pictures: gallery});
+    });
   });
 });
 
 app.get('/', function(req, res){
-  Gallery.display(function(err, result){
-    if(err)
-      throw err;
-    res.render('index', {pictures: result});
+  Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+    .then(function (gallery) {
+      res.render('index', {pictures: gallery});
   });
 });
 
@@ -51,20 +67,18 @@ app.get('/', function(req, res){
 app.get(/\/gallery\/\d+\/edit/, function(req, res){
   var split = req.url.split('/');
   var numID = split[2];
-  Gallery.view(numID, function(err, result){
-    if(err)
-      throw err;
-    res.render('edit', { num:numID,url: result.url, author: result.author, description:result.description});
+  Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+    .then(function (gallery) {
+      res.render('edit', { num:gallery[numID].dataValues.id,url: gallery[numID].dataValues.url, author: gallery[numID].dataValues.author, description:gallery[numID].dataValues.description});
   });
 });
 
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  Gallery.view(numID, function(err, result){
-    if(err)
-      throw err;
-    res.render('gallery', { num:numID,url: result.url, author: result.author, description:result.description});
+  Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+    .then(function (gallery) {
+      res.render('gallery', { num:gallery[numID].dataValues.id,url: gallery[numID].dataValues.url, author: gallery[numID].dataValues.author, description:gallery[numID].dataValues.description});
   });
 });
 
@@ -74,10 +88,9 @@ app.get('/gallery/new', function(req, res){
 
 
 app.post('/gallery', function (req, res) {
-  Gallery.create(req.body, function(err, result) {
-    if(err)
-      throw err;
-    res.render('gallery', { num:result.id,url: result.url, author: result.author, description:result.description});
+  Gallery.create({ author: req.body.author, url: req.body.url, description:req.body.description})
+    .then(function (gallery) {
+      res.render('gallery', { num:gallery.id,url: req.body.url, author: req.body.author, description:req.body.description});
   });
 });
 
@@ -100,6 +113,6 @@ app.post('/gallery', function (req, res) {
 var server = app.listen(3000, function(){
   var host = server.address().address;
   var port = server.address().port;
-
+  db.sequelize.sync();
   console.log('listening on',host, port);
 });

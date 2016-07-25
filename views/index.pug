@@ -6,6 +6,6 @@ html
     each picture, index in pictures
       div
         a(href="/gallery/" + index)
-          img(src=picture.url id=index)
-        p= 'Uploaded by' + picture.author
-        p= picture.description
+          img(src=picture.dataValues.url id=picture.dataValues.id)
+        p= 'Uploaded by' + picture.dataValues.author
+        p= picture.dataValues.description
