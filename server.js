@@ -1,9 +1,10 @@
 var express = require('express');
+var session = require('express-session');
 var path = require('path');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var passport = require('passport');
-var BasicStrategy = require('passport-http').BasicStrategy;
+var localStrategy = require('passport-local').Strategy;
 var querystring = require('querystring');
 var fs = require('fs');
 var db = require('./models');
@@ -18,14 +19,25 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(express.static(path.resolve(__dirname, 'public')));
 
 var user = { username: 'tyler', password: 'goodbye', email: 'bob@example.com' };
-passport.use(new BasicStrategy(
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+passport.use(new localStrategy(
   function(username, password, done) {
-    // Example authentication strategy using
-    if ( !(username === user.username && password === user.password) ) {
-      return done(null, false);
+    if(username === 'hello' && password === 'world'){
+      return done(null, {});
     }
-    return done(null, user);
+    else{
+      return done(null, false)
+    }
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(urlencodedParser, methodOverride(function(req, res){
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
@@ -64,8 +76,18 @@ app.put(/\/gallery\/\d+/, function (req, res) {
   });
 });
 
+app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),
+  function(req, res) {
+
+});
+
+app.get('/login', function(req, res) {
+  res.render('login');
+});
+
+
 app.delete(/\/gallery\/\d+/,
-  passport.authenticate('basic', { session: false }),function(req, res) {
+  function(req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
    Gallery.destroy({
@@ -108,7 +130,7 @@ app.get('/', function(req, res){
 
 
 app.get(/\/gallery\/\d+\/edit/,
-  passport.authenticate('basic', { session: false }),function(req, res) {
+  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),function(req, res) {
   var split = req.url.split('/');
   var numID = split[2];
   Gallery.findOne({
@@ -161,7 +183,7 @@ app.get(/\/gallery\/\d+/, function(req, res){
   });
 });
 
-app.get('/gallery/new',passport.authenticate('basic', { session: false }),function(req, res) {
+app.get('/gallery/new',passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),function(req, res) {
     res.render('new');
   });
 
