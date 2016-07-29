@@ -25,6 +25,7 @@
     "gulp-sass": "^2.3.2",
     "method-override": "^2.3.6",
     "pg": "^6.0.3",
+    "pg-hstore": "^2.3.2",
     "pug": "^2.0.0-beta4",
     "sequelize": "^3.23.6"
   }
