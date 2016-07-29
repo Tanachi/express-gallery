@@ -1,0 +1,209 @@
+// General Grid
+
+.block-container{
+  padding: 30px;
+}
+
+.block{
+  background-color: #EEE;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+// General Typography
+
+body{
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6{
+  text-align: center;
+}
+
+h1{
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+h2{
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+a{
+  text-decoration: none;
+}
+
+// Partials & Variables
+
+$breakpoints: (
+  'medium': 900px,
+  'large':  1200px
+) !default;
+
+// Found this Mixin at CSS-Tricks
+/// Mixin to manage responsive breakpoints
+/// @author Hugo Giraudel
+/// @param {String} $breakpoint - Breakpoint name
+/// @require $breakpoints
+@mixin respond-to($breakpoint) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Prints a media query based on the value
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+ 
+  // If the key doesn't exist in the map
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// 1. Many small items in a grid
+
+.small-grid li{
+  background-color: pink;
+  border: 1px solid red;
+  color: red;
+
+  @include respond-to('medium'){
+    background-color: lighten(green, 50%);
+    border: 1px solid green;
+    color: green;
+  }
+}
+
+.small-grid-inline-block-hack ul{
+  width: 100%;
+  margin:auto;
+
+  @include respond-to('medium'){
+    width: 400px;
+  }
+}
+
+.small-grid-inline-block-hack li{
+  box-sizing: border-box;
+  text-align: center;
+  display: inline-block;
+  width: 10%;
+  height: 30px;
+
+  @include respond-to('medium'){
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+  }
+}
+
+// 2. 2-Column Grid
+
+.column-1{
+  background-color: lighten(green, 50%);
+  border: 1px solid green;
+  color: green;
+  padding: 20px;
+}
+
+.column-2{
+  background-color: pink;
+  border: 1px solid red;
+  color: red;
+  padding: 20px;
+}
+
+.two-col-grid-floats .column-1{
+  box-sizing: border-box;
+  width: 100%;
+
+  @include respond-to('medium'){
+    float: right;
+    width: 50%;
+  }
+}
+
+.two-col-grid-floats .column-2{
+  width: 100%;
+  box-sizing: border-box;
+
+  @include respond-to('medium'){
+    float: left;
+    width: 50%;
+  }
+}
+
+// 3. Centering
+
+.centering-formula{
+  height: 300px;
+}
+
+.centered{
+  background-color: lighten(green, 50%);
+  border: 1px solid green;
+  color: green;
+  padding: 20px;    
+}
+
+// 4. Ordering
+
+p{
+  display: none;
+  text-align: center;
+
+  &.small{
+    display: block;
+  }
+
+  @include respond-to('medium'){
+    &.small{
+      display: none;
+    }
+
+    &.medium{
+      display: block;
+    }
+  }
+
+  @include respond-to('large'){
+    &.medium{
+      display: none;
+    }
+    
+    &.large{
+      display: block;
+    }
+  }
+}
+
+.item{
+  padding: 20px;
+  text-align: center;
+
+  &.item-a{
+    background-color: pink;
+    border: 1px solid red;
+    color: red;
+  }
+
+  &.item-b{
+    background-color: lighten(orange, 40%);
+    border: 1px solid orange;
+    color: orange;
+  }
+
+  &.item-c{
+    background-color: lighten(green, 40%);
+    border: 1px solid green;
+    color: green;
+  }
+
+  &.item-d{
+    background-color: lighten(blue, 40%);
+    border: 1px solid blue;
+    color: blue;
+  }
+}

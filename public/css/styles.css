@@ -1,5 +1,201 @@
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
+
+.clearfix {
+  display: inline-block; }
+
+/* start commented backslash hack \*/
+* html .clearfix {
+  height: 1%; }
+
+.clearfix {
+  display: block; }
+
+/* close commented backslash hack */
+.block-container {
+  padding: 30px; }
+
+.block {
+  background-color: #EEE;
+  padding: 30px;
+  margin-bottom: 20px; }
+
 body {
-  background: #333333; }
+  font-family: "Helvetica Neue", sans-serif; }
+
+h1, h2, h3, h4, h5, h6 {
+  text-align: center; }
 
 h1 {
+  font-size: 28px;
+  margin-bottom: 10px; }
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 10px; }
+
+a {
+  text-decoration: none; }
+
+.small-grid li {
+  background-color: pink;
+  border: 1px solid red;
   color: red; }
+  @media (min-width: 900px) {
+    .small-grid li {
+      background-color: #80ff80;
+      border: 1px solid green;
+      color: green; } }
+
+.small-grid-inline-block-hack ul {
+  width: 100%;
+  margin: auto; }
+  @media (min-width: 900px) {
+    .small-grid-inline-block-hack ul {
+      width: 400px; } }
+
+.small-grid-inline-block-hack li {
+  box-sizing: border-box;
+  text-align: center;
+  display: inline-block;
+  width: 10%;
+  height: 30px; }
+  @media (min-width: 900px) {
+    .small-grid-inline-block-hack li {
+      width: 40px;
+      height: 40px;
+      line-height: 40px; } }
+
+.column-1 {
+  background-color: #80ff80;
+  border: 1px solid green;
+  color: green;
+  padding: 20px; }
+
+.column-2 {
+  background-color: pink;
+  border: 1px solid red;
+  color: red;
+  padding: 20px; }
+
+.two-col-grid-floats .column-1 {
+  box-sizing: border-box;
+  width: 100%; }
+  @media (min-width: 900px) {
+    .two-col-grid-floats .column-1 {
+      float: right;
+      width: 50%; } }
+
+.two-col-grid-floats .column-2 {
+  width: 100%;
+  box-sizing: border-box; }
+  @media (min-width: 900px) {
+    .two-col-grid-floats .column-2 {
+      float: left;
+      width: 50%; } }
+
+.centering-formula {
+  height: 300px; }
+
+.centered {
+  background-color: #80ff80;
+  border: 1px solid green;
+  color: green;
+  padding: 20px; }
+
+p {
+  display: none;
+  text-align: center; }
+  p.small {
+    display: block; }
+  @media (min-width: 900px) {
+    p.small {
+      display: none; }
+    p.medium {
+      display: block; } }
+  @media (min-width: 1200px) {
+    p.medium {
+      display: none; }
+    p.large {
+      display: block; } }
+
+.item {
+  padding: 20px;
+  text-align: center; }
+  .item.item-a {
+    background-color: pink;
+    border: 1px solid red;
+    color: red; }
+  .item.item-b {
+    background-color: #ffedcc;
+    border: 1px solid orange;
+    color: orange; }
+  .item.item-c {
+    background-color: #4dff4d;
+    border: 1px solid green;
+    color: green; }
+  .item.item-d {
+    background-color: #ccccff;
+    border: 1px solid blue;
+    color: blue; }
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+body .row {
+  display: flex;
+  flex-flow: row;
+  justify-content: center; }
+
+p {
+  color: black;
+  font-size: 250%; }

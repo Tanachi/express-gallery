@@ -1,9 +1,34 @@
-$dark-color : #333333;
-
-body {
-  background: $dark-color;
+@import 'partials/clearfix';
+@import 'partials/general_styles';
+@import 'partials/reset';
+$small:'only screen and (min-width: 200px) and (max-width: 599px)';
+$medium:'only screen and (min-width: 600px) and (max-width: 899px)';
+$large:'(max-width: 900px)';
+@mixin small{
+  @media #{small}{
+    @content;
+  }
+}
+@mixin medium{
+  @media #{medium}{
+    @content;
+  }
+}
+@mixin large{
+  @media #{large}{
+    @content;
+  }
 }
 
-h1 {
- color:red;
+body{
+  .row{
+    display:flex;
+    flex-flow:row;
+    justify-content: center;
+  }
+}
+
+p{
+  color:black;
+  font-size: 250%;
 }

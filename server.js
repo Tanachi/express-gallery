@@ -13,7 +13,7 @@ var Gallery = db.Photos;
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'pug');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-
+app.use(express.static(path.resolve(__dirname, 'public')));
 app.use(urlencodedParser, methodOverride(function(req, res){
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     var method = req.body._method;
@@ -74,7 +74,27 @@ app.delete(/\/gallery\/\d+/, function (req, res) {
 app.get('/', function(req, res){
   Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
     .then(function (gallery) {
-      res.render('index', {pictures: gallery});
+      var bigPicture;
+      var pictureRow = [];
+      var pictureArray = [];
+      var rowCount = 3;
+      while(gallery.length > 0){
+        if(rowCount > 0){
+          pictureRow.push({author:gallery[0].dataValues.author,
+                          description:gallery[0].dataValues.description,
+                          url:gallery[0].dataValues.url,
+                          id:gallery[0].dataValues.id});
+          gallery.splice(0,1);
+          rowCount--;
+        }
+        else{
+          pictureArray.push(pictureRow);
+          pictureRow = [];
+          rowCount = 3;
+        }
+      }
+      pictureArray.push(pictureRow);
+      res.render('index', {pictures: pictureArray});
   });
 });
 
@@ -130,21 +150,6 @@ app.post('/gallery', function (req, res) {
       res.render('gallery', { num:gallery.id,url: req.body.url, author: req.body.author, description:req.body.description});
   });
 });
-
-// app.route('/book')
-//   .get(function (req, res) {
-//     res.send('get a book');
-//   })
-//   .post(function (req, res) {
-//     res.send('add a book');
-//   })
-//   .put(function (req, res) {
-//     res.send('edit a book');
-//   })
-//   .delete(function (req, res) {
-//     res.send('delete a book');
-// });
-
 var server = app.listen(3000, function(){
   var host = server.address().address;
   var port = server.address().port;

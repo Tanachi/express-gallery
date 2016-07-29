@@ -1,11 +1,22 @@
 html
   head
     title Gallery Index
+    link(rel='stylesheet', href='/css/styles.css')
   body
     h1 Gallery Index
-    each picture, index in pictures
-      div
-        a(href="/gallery/" + index)
-          img(src=picture.dataValues.url id=picture.dataValues.id)
-        p= 'Uploaded by' + picture.dataValues.author
-        p= picture.dataValues.description
+    each picture in pictures
+      div(class='row')
+        div(class = 'photo')
+          a(href="/gallery/" + picture[0].id)
+            img(src=picture[0].url)
+          h3= 'Uploaded by' + picture[0].author
+        if picture[1]
+          div(class = 'photo')
+            a(href="/gallery/" + picture[1].id)
+              img(src=picture[1].url id=picture[1].id)
+            h3= 'Uploaded by' + picture[1].author
+        if picture[2]
+          div(class = 'photo')
+            a(href="/gallery/" + picture[2].id)
+              img(src=picture[2].url id=picture[2].id)
+            h3= 'Uploaded by' + picture[2].author
