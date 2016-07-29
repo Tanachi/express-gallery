@@ -68,7 +68,6 @@ app.delete(/\/gallery\/\d+/,
   passport.authenticate('basic', { session: false }),function(req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  console.log('deleteing');
    Gallery.destroy({
     where: {
       id: numID
@@ -76,29 +75,14 @@ app.delete(/\/gallery\/\d+/,
   }).then(function(promise) {
     if(promise !== 0){
       Gallery.findAll({ author: req.body.author,
-                      url: req.body.url,
-                      description: req.body.description})
+                  url: req.body.url,
+                  description: req.body.description})
       .then(function (gallery) {
         var bigPicture;
-        var pictureRow = [];
         var pictureArray = [];
-        var rowCount = 3;
         while(gallery.length > 0){
-          if(rowCount > 0){
-            pictureRow.push({author:gallery[0].dataValues.author,
-                            description:gallery[0].dataValues.description,
-                            url:gallery[0].dataValues.url,
-                            id:gallery[0].dataValues.id});
-            gallery.splice(0,1);
-            rowCount--;
-          }
-          else{
-            pictureArray.push(pictureRow);
-            pictureRow = [];
-            rowCount = 3;
-          }
+         pictureArray.push(gallery.splice(0,3));
         }
-        pictureArray.push(pictureRow);
         res.render('index', {pictures: pictureArray});
       });
     }
@@ -114,25 +98,10 @@ app.get('/', function(req, res){
                   description: req.body.description})
     .then(function (gallery) {
       var bigPicture;
-      var pictureRow = [];
       var pictureArray = [];
-      var rowCount = 3;
       while(gallery.length > 0){
-        if(rowCount > 0){
-          pictureRow.push({author:gallery[0].dataValues.author,
-                          description:gallery[0].dataValues.description,
-                          url:gallery[0].dataValues.url,
-                          id:gallery[0].dataValues.id});
-          gallery.splice(0,1);
-          rowCount--;
-        }
-        else{
-          pictureArray.push(pictureRow);
-          pictureRow = [];
-          rowCount = 3;
-        }
+       pictureArray.push(gallery.splice(0,3));
       }
-      pictureArray.push(pictureRow);
       res.render('index', {pictures: pictureArray});
   });
 });
@@ -162,29 +131,30 @@ app.get(/\/gallery\/\d+\/edit/,
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  // Gallery.findOne({
-  //   where: {
-  //     id: {
-  //       $gt: numID
-  //     }
-  //   },
-  //     limit: 3
-  // }).then(function(argument) {
-  // });
+  var mainPicture;
+  var otherPictures = [];
   Gallery.findOne({
     where: {
       id: numID
     }
   }).then(function (gallery) {
-    if(gallery.length !== 0){
-      res.render('gallery', { num:gallery.dataValues.id,
-                        url: gallery.dataValues.url,
-                        author: gallery.dataValues.author,
-                        description:gallery.dataValues.description});
-    }
-    else{
+    if(gallery !== [])
+      mainPicture = gallery.dataValues;
+    else
       res.render('404');
-    }
+  });
+  Gallery.findAll({
+    where: {
+      id: {
+        $gt: numID
+      }
+    },
+      limit: 3
+  }).then(function(other) {
+    otherPictures.push(other[0].dataValues);
+    otherPictures.push(other[1].dataValues);
+    otherPictures.push(other[2].dataValues);
+    res.render('gallery', {mainPicture: mainPicture, otherPictures:otherPictures});
   });
 });
 
