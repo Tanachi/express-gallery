@@ -196,6 +196,18 @@ body .row {
   flex-flow: row;
   justify-content: center; }
 
+body .frame {
+  display: flex;
+  flex-flow: row;
+  justify-content: center; }
+  body .frame .main {
+    display: flex;
+    flex-direction: column; }
+    body .frame .main .mainTitle {
+      font-size: 250%; }
+  body .frame .column {
+    display: flex;
+    flex-flow: column; }
+
 p {
-  color: black;
-  font-size: 250%; }
+  color: black; }

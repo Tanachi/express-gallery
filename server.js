@@ -151,9 +151,12 @@ app.get(/\/gallery\/\d+/, function(req, res){
     },
       limit: 3
   }).then(function(other) {
-    otherPictures.push(other[0].dataValues);
-    otherPictures.push(other[1].dataValues);
-    otherPictures.push(other[2].dataValues);
+    if(other[0])
+      otherPictures.push(other[0].dataValues);
+    if(other[1])
+      otherPictures.push(other[1].dataValues);
+    if(other[2])
+      otherPictures.push(other[2].dataValues);
     res.render('gallery', {mainPicture: mainPicture, otherPictures:otherPictures});
   });
 });

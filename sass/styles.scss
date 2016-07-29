@@ -26,9 +26,26 @@ body{
     flex-flow:row;
     justify-content: center;
   }
+  .frame{
+    display: flex;
+    flex-flow:row;
+    justify-content:center;
+    .main{
+      display:flex;
+      flex-direction: column;
+      .mainTitle{
+          font-size: 250%;
+      }
+    }
+    .column{
+      display: flex;
+      flex-flow:column;
+      .photo{
+      }
+    }
+  }
 }
 
 p{
   color:black;
-  font-size: 250%;
 }

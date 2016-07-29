@@ -3,31 +3,35 @@ html(lang='en')
   head
     meta(charset='UTF-8')
     title= mainPicture.author
+    link(rel='stylesheet', href='/css/styles.css')
   body
-    img(src=mainPicture.url id=mainPicture.id)
-    p= 'Uploaded by  ' + mainPicture.author
-    p= mainPicture.description
     form( action='/gallery/' + mainPicture.id + '/edit')
       input(type='submit', value='EDIT')
     form( method='POST' action='/gallery/' + mainPicture.id)
       input(type="hidden" name="_method" value="DELETE")
       input(type='hidden' name="_id" value=mainPicture.id)
       input(type='submit', value='DELETE')
-    if otherPictures
-      div(class='row')
-        div(class = 'photo')
-          a(href="/gallery/" + otherPictures[0].id)
-            img(src=otherPictures[0].url)
-          h3= 'Uploaded by' + otherPictures[0].author
-        if otherPictures[1]
+    div(class = 'frame')
+      div(class = 'main')
+        img(src=mainPicture.url id=mainPicture.id)
+        h3(class="mainTitle")= 'Uploaded by  ' + mainPicture.author
+        h3(class="mainTitle")= mainPicture.description
+      if otherPictures
+        div(class='column')
           div(class = 'photo')
-            a(href="/gallery/" + otherPictures[1].id)
-              img(src=otherPictures[1].url id=otherPictures[1].id)
-            h3= 'Uploaded by' + otherPictures[1].author
-        if otherPictures[2]
-          div(class = 'photo')
-            a(href="/gallery/" + otherPictures[2].id)
-              img(src=otherPictures[2].url id=otherPictures[2].id)
-            h3= 'Uploaded by' + otherPictures[2].author
+            a(href="/gallery/" + otherPictures[0].id)
+              img(src=otherPictures[0].url)
+            h3= 'Uploaded by' + otherPictures[0].author
+          if otherPictures[1]
+            div(class = 'photo')
+              a(href="/gallery/" + otherPictures[1].id)
+                img(src=otherPictures[1].url id=otherPictures[1].id)
+              h3= 'Uploaded by' + otherPictures[1].author
+          if otherPictures[2]
+            div(class = 'photo')
+              a(href="/gallery/" + otherPictures[2].id)
+                img(src=otherPictures[2].url id=otherPictures[2].id)
+              h3= 'Uploaded by' + otherPictures[2].author
+
 
 
