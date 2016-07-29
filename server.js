@@ -2,18 +2,31 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
+var passport = require('passport');
+var BasicStrategy = require('passport-http').BasicStrategy;
 var querystring = require('querystring');
 var fs = require('fs');
 var db = require('./models');
 var app = express();
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
 var Gallery = db.Photos;
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'pug');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(express.static(path.resolve(__dirname, 'public')));
+
+var user = { username: 'tyler', password: 'goodbye', email: 'bob@example.com' };
+passport.use(new BasicStrategy(
+  function(username, password, done) {
+    // Example authentication strategy using
+    if ( !(username === user.username && password === user.password) ) {
+      return done(null, false);
+    }
+    return done(null, user);
+}));
+
 app.use(urlencodedParser, methodOverride(function(req, res){
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
     var method = req.body._method;
@@ -51,7 +64,8 @@ app.put(/\/gallery\/\d+/, function (req, res) {
   });
 });
 
-app.delete(/\/gallery\/\d+/, function (req, res) {
+app.delete(/\/gallery\/\d+/,
+  passport.authenticate('basic', { session: false }),function(req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
   console.log('deleteing');
@@ -61,7 +75,9 @@ app.delete(/\/gallery\/\d+/, function (req, res) {
     }
   }).then(function(promise) {
     if(promise !== 0){
-      Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+      Gallery.findAll({ author: req.body.author,
+                      url: req.body.url,
+                      description: req.body.description})
       .then(function (gallery) {
         var bigPicture;
         var pictureRow = [];
@@ -93,7 +109,9 @@ app.delete(/\/gallery\/\d+/, function (req, res) {
 });
 
 app.get('/', function(req, res){
-  Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+  Gallery.findAll({ author: req.body.author,
+                  url: req.body.url,
+                  description: req.body.description})
     .then(function (gallery) {
       var bigPicture;
       var pictureRow = [];
@@ -120,7 +138,8 @@ app.get('/', function(req, res){
 });
 
 
-app.get(/\/gallery\/\d+\/edit/, function(req, res){
+app.get(/\/gallery\/\d+\/edit/,
+  passport.authenticate('basic', { session: false }),function(req, res) {
   var split = req.url.split('/');
   var numID = split[2];
   Gallery.findOne({
@@ -143,6 +162,15 @@ app.get(/\/gallery\/\d+\/edit/, function(req, res){
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
+  // Gallery.findOne({
+  //   where: {
+  //     id: {
+  //       $gt: numID
+  //     }
+  //   },
+  //     limit: 3
+  // }).then(function(argument) {
+  // });
   Gallery.findOne({
     where: {
       id: numID
@@ -160,15 +188,19 @@ app.get(/\/gallery\/\d+/, function(req, res){
   });
 });
 
-app.get('/gallery/new', function(req, res){
-  res.render('new');
-});
+app.get('/gallery/new',passport.authenticate('basic', { session: false }),function(req, res) {
+    res.render('new');
+  });
 
 
 app.post('/gallery', function (req, res) {
-  Gallery.create({ author: req.body.author, url: req.body.url, description:req.body.description})
+  Gallery.create({ author: req.body.author,
+                  url: req.body.url,
+                  description:req.body.description})
     .then(function (gallery) {
-      res.render('gallery', { num:gallery.id,url: req.body.url, author: req.body.author, description:req.body.description});
+      res.render('gallery', { num:gallery.id,url: req.body.url,
+                            author: req.body.author,
+                            description:req.body.description});
   });
 });
 var server = app.listen(3000, function(){

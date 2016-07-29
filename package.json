@@ -24,6 +24,8 @@
     "gulp-connect": "^4.2.0",
     "gulp-sass": "^2.3.2",
     "method-override": "^2.3.6",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
     "pg": "^6.0.3",
     "pg-hstore": "^2.3.2",
     "pug": "^2.0.0-beta4",
