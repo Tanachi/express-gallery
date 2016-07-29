@@ -39,10 +39,15 @@ app.put(/\/gallery\/\d+/, function (req, res) {
     where: {
       id: numID
     }
-  }).then(function(promise) {
-    res.render('gallery', {num:promise.id, url: req.body.url,
+  }).then(function(gallery) {
+    if(gallery.length !== 0){
+      res.render('gallery', {num:gallery.id, url: req.body.url,
                           author:req.body.author,
                           description:req.body.description})
+    }
+    else{
+      res.render('404');
+    }
   });
 });
 
@@ -53,11 +58,16 @@ app.delete(/\/gallery\/\d+/, function (req, res) {
     where: {
       id: numID
     }
-  }).then(function() {
-    Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
+  }).then(function(promise) {
+    if(promise !== 0){
+      Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
       .then(function (gallery) {
         res.render('index', {pictures: gallery});
-    });
+      });
+    }
+    else{
+      res.render('404');
+    }
   });
 });
 
@@ -77,20 +87,35 @@ app.get(/\/gallery\/\d+\/edit/, function(req, res){
       id: numID
     }
   }).then(function (gallery) {
-    res.render('edit', { num:gallery[0].dataValues.id,
+    if(gallery.length !== 0){
+      res.render('edit', { num:gallery[0].dataValues.id,
                         url: gallery[0].dataValues.url,
                         author: gallery[0].dataValues.author,
                         description:gallery[0].dataValues.description});
+    }
+    else{
+      res.render('404');
+    }
   });
 });
 
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
-    .then(function (gallery) {
-      console.log(gallery);
-      res.render('gallery', { num:gallery[numID].dataValues.id,url: gallery[numID].dataValues.url, author: gallery[numID].dataValues.author, description:gallery[numID].dataValues.description});
+  Gallery.findAll({
+    where: {
+      id: numID
+    }
+  }).then(function (gallery) {
+    if(gallery.length !== 0){
+      res.render('gallery', { num:gallery[0].dataValues.id,
+                        url: gallery[0].dataValues.url,
+                        author: gallery[0].dataValues.author,
+                        description:gallery[0].dataValues.description});
+    }
+    else{
+      res.render('404');
+    }
   });
 });
 
@@ -105,8 +130,6 @@ app.post('/gallery', function (req, res) {
       res.render('gallery', { num:gallery.id,url: req.body.url, author: req.body.author, description:req.body.description});
   });
 });
-
-
 
 // app.route('/book')
 //   .get(function (req, res) {
