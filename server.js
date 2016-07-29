@@ -54,6 +54,7 @@ app.put(/\/gallery\/\d+/, function (req, res) {
 app.delete(/\/gallery\/\d+/, function (req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
+  console.log('deleteing');
    Gallery.destroy({
     where: {
       id: numID
@@ -62,7 +63,27 @@ app.delete(/\/gallery\/\d+/, function (req, res) {
     if(promise !== 0){
       Gallery.findAll({ author: req.body.author, url: req.body.url, description: req.body.description})
       .then(function (gallery) {
-        res.render('index', {pictures: gallery});
+        var bigPicture;
+        var pictureRow = [];
+        var pictureArray = [];
+        var rowCount = 3;
+        while(gallery.length > 0){
+          if(rowCount > 0){
+            pictureRow.push({author:gallery[0].dataValues.author,
+                            description:gallery[0].dataValues.description,
+                            url:gallery[0].dataValues.url,
+                            id:gallery[0].dataValues.id});
+            gallery.splice(0,1);
+            rowCount--;
+          }
+          else{
+            pictureArray.push(pictureRow);
+            pictureRow = [];
+            rowCount = 3;
+          }
+        }
+        pictureArray.push(pictureRow);
+        res.render('index', {pictures: pictureArray});
       });
     }
     else{
@@ -102,16 +123,16 @@ app.get('/', function(req, res){
 app.get(/\/gallery\/\d+\/edit/, function(req, res){
   var split = req.url.split('/');
   var numID = split[2];
-  Gallery.findAll({
+  Gallery.findOne({
     where: {
       id: numID
     }
   }).then(function (gallery) {
     if(gallery.length !== 0){
-      res.render('edit', { num:gallery[0].dataValues.id,
-                        url: gallery[0].dataValues.url,
-                        author: gallery[0].dataValues.author,
-                        description:gallery[0].dataValues.description});
+      res.render('edit', { num:gallery.dataValues.id,
+                        url: gallery.dataValues.url,
+                        author: gallery.dataValues.author,
+                        description:gallery.dataValues.description});
     }
     else{
       res.render('404');
@@ -122,16 +143,16 @@ app.get(/\/gallery\/\d+\/edit/, function(req, res){
 app.get(/\/gallery\/\d+/, function(req, res){
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
-  Gallery.findAll({
+  Gallery.findOne({
     where: {
       id: numID
     }
   }).then(function (gallery) {
     if(gallery.length !== 0){
-      res.render('gallery', { num:gallery[0].dataValues.id,
-                        url: gallery[0].dataValues.url,
-                        author: gallery[0].dataValues.author,
-                        description:gallery[0].dataValues.description});
+      res.render('gallery', { num:gallery.dataValues.id,
+                        url: gallery.dataValues.url,
+                        author: gallery.dataValues.author,
+                        description:gallery.dataValues.description});
     }
     else{
       res.render('404');
