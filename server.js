@@ -4,13 +4,13 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 var querystring = require('querystring');
 var fs = require('fs');
 var db = require('./models');
 var app = express();
 var Gallery = db.Photos;
-
+var Admins = db.User;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.set('views', path.resolve(__dirname, 'views'));
@@ -18,7 +18,6 @@ app.set('view engine', 'pug');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(express.static(path.resolve(__dirname, 'public')));
 
-var user = { username: 'tyler', password: 'goodbye', email: 'bob@example.com' };
 passport.serializeUser(function(user, done) {
   done(null, user);
 });
@@ -26,15 +25,40 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   done(null, user);
 });
-passport.use(new localStrategy(
-  function(username, password, done) {
-    if(username === 'hello' && password === 'world'){
-      return done(null, {});
+
+
+function authenticate(username, password) {
+  return Admins.findOne({
+    where: {
+      username: username,
+      password: password
     }
-    else{
-      return done(null, false)
-    }
-}));
+  });
+}
+
+passport.use(new LocalStrategy(
+  function (username, password, done) {
+    var isAuthenticated = authenticate(username, password).then(function(loginInfo) {
+      if (!loginInfo.dataValues.id) {
+        return done(null, false);
+      }
+      console.log('hello');
+      var user = {
+        name: "Bob",
+        role: "ADMIN",
+        color: "orange"
+      }
+    return done(null, user);
+    });
+  }
+));
+
+function isAuthenticated (req, res, next) {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
+  }
+  return next();
+}
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -46,6 +70,8 @@ app.use(urlencodedParser, methodOverride(function(req, res){
     return method;
   }
 }));
+
+
 
 app.put(/\/gallery\/\d+/, function (req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
@@ -76,17 +102,20 @@ app.put(/\/gallery\/\d+/, function (req, res) {
   });
 });
 
-app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),
-  function(req, res) {
+app.post('/login',
+  passport.authenticate('local', {
+    successRedirect: '/secret',
+    failureRedirect: '/login'
+  })
+);
 
-});
 
 app.get('/login', function(req, res) {
   res.render('login');
 });
 
 
-app.delete(/\/gallery\/\d+/,
+app.delete(/\/gallery\/\d+/, isAuthenticated,
   function(req, res) {
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
@@ -129,8 +158,7 @@ app.get('/', function(req, res){
 });
 
 
-app.get(/\/gallery\/\d+\/edit/,
-  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),function(req, res) {
+app.get(/\/gallery\/\d+\/edit/, isAuthenticated,function(req, res) {
   var split = req.url.split('/');
   var numID = split[2];
   Gallery.findOne({
@@ -183,11 +211,15 @@ app.get(/\/gallery\/\d+/, function(req, res){
   });
 });
 
-app.get('/gallery/new',passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login' }),function(req, res) {
+app.get('/gallery/new',isAuthenticated, function(req, res) {
     res.render('new');
   });
 
-
+app.get('/secret',
+  function (req, res) {
+    res.render('secret');
+  }
+);
 app.post('/gallery', function (req, res) {
   Gallery.create({ author: req.body.author,
                   url: req.body.url,

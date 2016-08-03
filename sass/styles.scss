@@ -21,6 +21,10 @@ $large:'(max-width: 900px)';
 }
 
 body{
+  .line{
+    height:10%;
+    width: 100%;
+  }
   .row{
     display:flex;
     flex-flow:row;
