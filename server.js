@@ -80,40 +80,66 @@ app.use(urlencodedParser, methodOverride(function(req, res){
   }
 }));
 
-
+// link http://media-hearth.cursecdn.com/avatars/147/957/264.png
 
 app.put(/\/gallery\/\d+/, function (req, res) {
+  console.log('editing');
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
+  var mainPicture;
+  var otherPictures = [];
   var updateInfo = {};
-  if(req.body.url !== ''){
-    updateInfo.url = req.body.url;
-  }
-  if(req.body.author !== ''){
-    updateInfo.author = req.body.author;
-  }
-  if(req.body.description !== ''){
-    updateInfo.description = req.body.description;
-  }
-  Gallery.update(updateInfo, {
-    where: {
-      id: numID
+
+  Gallery.findOne({id: numID}).then(function(gallery) {
+    if(gallery !== []){
+      if(req.body.url !== ''){
+        updateInfo.url = req.body.url;
+      }
+      else{
+        updateInfo.url = gallery.dataValues.url;
+      }
+      if(req.body.author !== ''){
+        updateInfo.author = req.body.author;
+      }
+      else{
+        updateInfo.author = gallery.dataValues.author;
+      }
+      if(req.body.description !== ''){
+        updateInfo.description = req.body.description;
+      }
+      else{
+        updateInfo.description = gallery.dataValues.description;
+      }
+      Gallery.update(updateInfo,
+        {where:{id:gallery.dataValues.id}}).then(function(updatedObjects) {
+        mainPicture =updateInfo;
+        Gallery.findAll({
+          where: {
+            id: {
+              $gt: numID
+            }
+          },
+          limit: 3
+        }).then(function(other) {
+          if(other[0])
+            otherPictures.push(other[0].dataValues);
+          if(other[1])
+            otherPictures.push(other[1].dataValues);
+          if(other[2])
+            otherPictures.push(other[2].dataValues);
+        res.render('gallery', {mainPicture: mainPicture,
+                              otherPictures:otherPictures});
+        });
+      });
     }
-  }).then(function(gallery) {
-    if(gallery.length !== 0){
-      res.render('gallery', {num:gallery.id, url: req.body.url,
-                          author:req.body.author,
-                          description:req.body.description})
-    }
-    else{
+    else
       res.render('404');
-    }
   });
 });
 
 app.post('/login',
   passport.authenticate('local', {
-    successRedirect: '/secret',
+    successRedirect: '/',
     failureRedirect: '/login'
   })
 );
@@ -143,6 +169,7 @@ app.delete(/\/gallery\/\d+/, isAuthenticated,
         while(gallery.length > 0){
          pictureArray.push(gallery.splice(0,3));
         }
+        console.log('delete');
         res.render('index', {pictures: pictureArray});
       });
     }

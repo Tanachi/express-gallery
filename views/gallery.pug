@@ -17,11 +17,12 @@ html(lang='en')
         h3(class="mainTitle")= 'Uploaded by  ' + mainPicture.author
         h3(class="mainTitle")= mainPicture.description
       if otherPictures
-        div(class='column')
-          div(class = 'photo')
-            a(href="/gallery/" + otherPictures[0].id)
-              img(src=otherPictures[0].url)
-            h3= 'Uploaded by' + otherPictures[0].author
+        if otherPictures[0]
+          div(class='column')
+            div(class = 'photo')
+              a(href="/gallery/" + otherPictures[0].id)
+                img(src=otherPictures[0].url)
+              h3= 'Uploaded by' + otherPictures[0].author
           if otherPictures[1]
             div(class = 'photo')
               a(href="/gallery/" + otherPictures[1].id)
