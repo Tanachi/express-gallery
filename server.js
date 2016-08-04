@@ -261,9 +261,7 @@ app.post('/gallery', function (req, res) {
                   url: req.body.url,
                   description:req.body.description})
     .then(function (gallery) {
-      res.render('gallery', { num:gallery.id,url: req.body.url,
-                            author: req.body.author,
-                            description:req.body.description});
+      res.render('gallery', {mainPicture:req.body});
   });
 });
 var server = app.listen(3000, function(){
