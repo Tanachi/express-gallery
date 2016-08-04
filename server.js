@@ -5,7 +5,9 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var settings= require('./config.json');
 var querystring = require('querystring');
+var RedisStore = require('connect-redis')(session);
 var fs = require('fs');
 var db = require('./models');
 var app = express();
@@ -17,6 +19,13 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'pug');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(session({
+  store: new RedisStore(),
+  secret: settings.SESSION.secret,
+  resave: true,
+  saveUninitialized: false
+}));
+
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -42,8 +51,8 @@ passport.use(new LocalStrategy(
       if (!loginInfo.dataValues.id) {
         return done(null, false);
       }
-      console.log('hello');
-      var user = {
+        console.log('hello');
+        var user = {
         name: "Bob",
         role: "ADMIN",
         color: "orange"
