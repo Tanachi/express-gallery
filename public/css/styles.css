@@ -203,15 +203,13 @@ body .row {
 body .frame {
   display: flex;
   flex-flow: row;
+  background-color: blue;
   justify-content: center; }
-  body .frame .main {
-    display: flex;
-    flex-direction: column; }
-    body .frame .main .mainTitle {
-      font-size: 250%; }
+  body .frame .mainTitle {
+    font-size: 250%; }
   body .frame .column {
-    display: flex;
-    flex-flow: column; }
+    background-color: red;
+    margin-left: 20px; }
 
 p {
   color: black; }

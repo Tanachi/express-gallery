@@ -48,10 +48,10 @@ function authenticate(username, password) {
 passport.use(new LocalStrategy(
   function (username, password, done) {
     var isAuthenticated = authenticate(username, password).then(function(loginInfo) {
-      if (!loginInfo.dataValues.id) {
+      if (!loginInfo) {
         return done(null, false);
       }
-        console.log('hello');
+      console.log(loginInfo);
         var user = {
         name: "Bob",
         role: "ADMIN",
@@ -63,6 +63,7 @@ passport.use(new LocalStrategy(
 ));
 
 function isAuthenticated (req, res, next) {
+  req.session.dest = req.url;
   if (!req.isAuthenticated()) {
     return res.redirect('/login');
   }
@@ -83,7 +84,6 @@ app.use(urlencodedParser, methodOverride(function(req, res){
 // link http://media-hearth.cursecdn.com/avatars/147/957/264.png
 
 app.put(/\/gallery\/\d+/, function (req, res) {
-  console.log('editing');
   var urlSplit = req.url.split(/\/gallery\//);
   var numID = urlSplit[1];
   var mainPicture;
@@ -137,14 +137,18 @@ app.put(/\/gallery\/\d+/, function (req, res) {
   });
 });
 
-app.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-  })
-);
-
-
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      var gogo  = req.session.dest;
+      req.session.dest = null;
+      return res.redirect(gogo);
+    });
+  })(req, res, next);
+});
 app.get('/login', function(req, res) {
   res.render('login');
 });
@@ -160,18 +164,7 @@ app.delete(/\/gallery\/\d+/, isAuthenticated,
     }
   }).then(function(promise) {
     if(promise !== 0){
-      Gallery.findAll({ author: req.body.author,
-                  url: req.body.url,
-                  description: req.body.description})
-      .then(function (gallery) {
-        var bigPicture;
-        var pictureArray = [];
-        while(gallery.length > 0){
-         pictureArray.push(gallery.splice(0,3));
-        }
-        console.log('delete');
-        res.render('index', {pictures: pictureArray});
-      });
+      return res.redirect('/');
     }
     else{
       res.render('404');
@@ -251,7 +244,7 @@ app.get('/gallery/new',isAuthenticated, function(req, res) {
     res.render('new');
   });
 
-app.get('/secret',
+app.get('/secret', isAuthenticated,
   function (req, res) {
     res.render('secret');
   }

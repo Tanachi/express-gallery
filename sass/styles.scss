@@ -33,19 +33,14 @@ body{
   .frame{
     display: flex;
     flex-flow:row;
+    background-color: blue;
     justify-content:center;
-    .main{
-      display:flex;
-      flex-direction: column;
       .mainTitle{
           font-size: 250%;
       }
-    }
     .column{
-      display: flex;
-      flex-flow:column;
-      .photo{
-      }
+      background-color: red;
+      margin-left: 20px;
     }
   }
 }
