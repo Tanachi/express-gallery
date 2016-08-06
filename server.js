@@ -51,7 +51,6 @@ passport.use(new LocalStrategy(
       if (!loginInfo) {
         return done(null, false);
       }
-      console.log(loginInfo);
         var user = {
         name: "Bob",
         role: "ADMIN",
@@ -157,6 +156,10 @@ app.get('/login', function(req, res) {
   res.render('login');
 });
 
+app.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/');
+});
 
 app.delete(/\/gallery\/\d+/, isAuthenticated,
   function(req, res) {
@@ -177,7 +180,7 @@ app.delete(/\/gallery\/\d+/, isAuthenticated,
 });
 
 app.get('/', function(req, res){
-  Gallery.findAll({ author: req.body.author,
+  Gallery.findAll({order:'id ASC', author: req.body.author,
                   url: req.body.url,
                   description: req.body.description})
     .then(function (gallery) {
@@ -252,6 +255,8 @@ app.get(/\/gallery\/\d+/, function(req, res){
 app.get('/gallery/new',isAuthenticated, function(req, res) {
     res.render('new');
   });
+
+
 
 app.get('/secret', isAuthenticated,
   function (req, res) {

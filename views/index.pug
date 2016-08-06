@@ -9,10 +9,7 @@ html
       p Welcome to our online portfolio, we are small group of passionite designers and architects, looking to change and create amazing digital images to inspire others to follow in our inovative steps. Free Architect WordPress Theme
     div(class= 'buttonBar')
       button(type='button', onclick="location.href='/gallery/new'") New Picture
-      if loginStatus = false
-        button(type='button', onclick= loginHelp, value = loginStatus) Login
-      if loginStatus = true
-        button(type='button', onclick= loginHelp, value = loginStatus) Logout
+      button(type='button', onclick= loginHelp) #{loginStatus}
       button(type='button', onclick="location.href='/'") Home
     br
     each picture in pictures
@@ -20,16 +17,16 @@ html
         if picture[0]
           div(class = 'photo')
             a(href="/gallery/" + picture[0].id)
-              img(src=picture[0].url)
+              img(class = 'pik' src=picture[0].url)
             p= 'Uploaded by' + picture[0].author
         if picture[1]
           div(class = 'photo')
             a(href="/gallery/" + picture[1].id)
-              img(src=picture[1].url id=picture[1].id)
+              img(class = 'pik' src=picture[1].url id=picture[1].id)
             p= 'Uploaded by' + picture[1].author
         if picture[2]
           div(class = 'photo')
             a(href="/gallery/" + picture[2].id)
-              img(src=picture[2].url id=picture[2].id)
+              img(class = 'pik' src=picture[2].url id=picture[2].id)
             p= 'Uploaded by' + picture[2].author
       img(class = 'line' src='./Line-Divider.png')
