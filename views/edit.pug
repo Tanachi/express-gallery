@@ -4,17 +4,21 @@ html
   head
     meta(charset='UTF-8')
     title Edit Image
+    link(rel='stylesheet', href='/css/styles.css')
   body
-    img(src=url id=num)
-    p= 'Uploaded by ' + author
-    p= description
-  form( method='POST' action='/gallery/' + num)
-    input(type="hidden" name="_method" value="PUT")
-    input(type='hidden' name="_id" value=num)
-    | author:
-    input(type= "text" name="author")
-    | url:
-    input(type= "text" name="url")
-    | description:
-    textarea(name="description")
-    input(type='submit', value='Submit')
+    div(class = 'editImage')
+      div(class = 'editFrame')
+        img(src=url id=num)
+        p= 'Uploaded by ' + author
+        p= description
+        form(class = 'editForm' type= 'x-www-form-urlencoded' method='POST' action='/gallery')
+          h2 Author
+          input(type= "text" name="author")
+          br
+          h2 Url
+          input(type= "text" name="url")
+          br
+          h2 Description
+          textarea(name="description")
+          br
+          input(type='submit', value='Submit')

@@ -1,13 +1,19 @@
-html
+doctype html
+html(lang='en')
   head
+    meta(charset='UTF-8')
     title New Gallery Image
+    link(rel='stylesheet', href='/css/styles.css')
   body
     h1 New Gallery Image
     form(type= 'x-www-form-urlencoded' method='POST' action='/gallery')
-      | author:
+      h2 Author
       input(type= "text" name="author")
-      | url:
+      br
+      h2 Url
       input(type= "text" name="url")
-      | description:
+      br
+      h2 Description
       textarea(name="description")
+      br
       input(type='submit', value='Submit')

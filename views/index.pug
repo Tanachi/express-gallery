@@ -1,25 +1,35 @@
+-var loginHelp = "location.href = '/" + loginStatus + "'"
 html
   head
     title Gallery Index
     link(rel='stylesheet', href='/css/styles.css')
   body
-    h1 Gallery Index
-    a(href="/gallery/new")
-      h2 New Picture
+    div(class= 'textHeader')
+      h1 _Architekt
+      p Welcome to our online portfolio, we are small group of passionite designers and architects, looking to change and create amazing digital images to inspire others to follow in our inovative steps. Free Architect WordPress Theme
+    div(class= 'buttonBar')
+      button(type='button', onclick="location.href='/gallery/new'") New Picture
+      if loginStatus = false
+        button(type='button', onclick= loginHelp, value = loginStatus) Login
+      if loginStatus = true
+        button(type='button', onclick= loginHelp, value = loginStatus) Logout
+      button(type='button', onclick="location.href='/'") Home
+    br
     each picture in pictures
       div(class='row')
-        div(class = 'photo')
-          a(href="/gallery/" + picture[0].id)
-            img(src=picture[0].url)
-          h3= 'Uploaded by' + picture[0].author
+        if picture[0]
+          div(class = 'photo')
+            a(href="/gallery/" + picture[0].id)
+              img(src=picture[0].url)
+            p= 'Uploaded by' + picture[0].author
         if picture[1]
           div(class = 'photo')
             a(href="/gallery/" + picture[1].id)
               img(src=picture[1].url id=picture[1].id)
-            h3= 'Uploaded by' + picture[1].author
+            p= 'Uploaded by' + picture[1].author
         if picture[2]
           div(class = 'photo')
             a(href="/gallery/" + picture[2].id)
               img(src=picture[2].url id=picture[2].id)
-            h3= 'Uploaded by' + picture[2].author
+            p= 'Uploaded by' + picture[2].author
       img(class = 'line' src='./Line-Divider.png')

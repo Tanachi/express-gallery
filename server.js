@@ -138,12 +138,16 @@ app.put(/\/gallery\/\d+/, function (req, res) {
 });
 
 app.post('/login', function(req, res, next) {
+  var gogo;
   passport.authenticate('local', function(err, user, info) {
     if (err) { return next(err); }
     if (!user) { return res.redirect('/login'); }
     req.logIn(user, function(err) {
       if (err) { return next(err); }
-      var gogo  = req.session.dest;
+      if(req.session.dest)
+        gogo  = req.session.dest;
+      else
+        gogo = '/';
       req.session.dest = null;
       return res.redirect(gogo);
     });
@@ -182,7 +186,12 @@ app.get('/', function(req, res){
       while(gallery.length > 0){
        pictureArray.push(gallery.splice(0,3));
       }
-      res.render('index', {pictures: pictureArray});
+      var loginStatus;
+      if(req.isAuthenticated() === true)
+        loginStatus = 'logout';
+      else
+        loginStatus = 'login'
+      res.render('index', {pictures: pictureArray, loginStatus: loginStatus});
   });
 });
 

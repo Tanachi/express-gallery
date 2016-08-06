@@ -1,6 +1,6 @@
-@import 'partials/clearfix';
-@import 'partials/general_styles';
 @import 'partials/reset';
+@import 'partials/clearfix';
+// @import 'partials/general_styles';
 $small:'only screen and (min-width: 200px) and (max-width: 599px)';
 $medium:'only screen and (min-width: 600px) and (max-width: 899px)';
 $large:'(max-width: 900px)';
@@ -21,6 +21,25 @@ $large:'(max-width: 900px)';
 }
 
 body{
+  text-decoration: none;
+  .buttonBar{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .textHeader{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    h1{
+      font-size: 400%;
+    }
+    p{
+      font-size: 100%;
+      width: 24em;
+      word-wrap: break-word;
+    }
+  }
   .line{
     height:10%;
     width: 100%;
@@ -29,22 +48,46 @@ body{
     display:flex;
     flex-flow:row;
     justify-content: center;
+    .photo{
+      margin-left: 10px;
+      margin-right: 10px;
+    }
   }
   .frame{
     display: flex;
     flex-flow:row;
-    background-color: blue;
     justify-content:center;
       .mainTitle{
           font-size: 250%;
       }
     .column{
-      background-color: red;
       margin-left: 20px;
     }
   }
-}
+  .editImage{
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-items:center;
 
-p{
-  color:black;
+  }
+  input[type=text], select {
+    width: 75%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type=submit] {
+    width: 75%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 }
