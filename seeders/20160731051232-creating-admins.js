@@ -21,12 +21,6 @@ up : function (queryInterface, Sequelize) {
   },
 
   down : function (queryInterface, Sequelize) {
-    queryInterface.bulkDelete('Users', [{
-      username :'Tyler'
-    },{
-      username :'Fang'
-    },{
-      username :'Sherman'
-    }])
+    return queryInterface.bulkDelete('Users', []);
   }
 };

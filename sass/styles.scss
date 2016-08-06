@@ -21,6 +21,10 @@ $large:'(max-width: 900px)';
 }
 
 body{
+  .pik{
+    max-height: 300px;
+    max-width: 400px;
+  }
   text-decoration: none;
   .buttonBar{
     display:flex;
@@ -51,10 +55,6 @@ body{
     .photo{
       margin-left: 10px;
       margin-right: 10px;
-      .pik{
-        max-height: 300px;
-        max-width: 400px;
-      }
     }
   }
   .frame{

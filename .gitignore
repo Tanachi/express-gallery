@@ -34,4 +34,4 @@ data/
 
 config.json
 gulpfile.js
-public
+/public/css

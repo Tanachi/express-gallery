@@ -21,6 +21,6 @@ up : function (queryInterface, Sequelize) {
   },
 
   down : function (queryInterface, Sequelize) {
-    queryInterface.bulkDelete('Photos');
+    return queryInterface.bulkDelete('Photos');
   }
 };

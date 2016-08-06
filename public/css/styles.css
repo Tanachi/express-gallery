@@ -66,6 +66,9 @@ table {
 /* close commented backslash hack */
 body {
   text-decoration: none; }
+  body .pik {
+    max-height: 300px;
+    max-width: 400px; }
   body .buttonBar {
     display: flex;
     flex-direction: row;
@@ -90,9 +93,6 @@ body {
     body .row .photo {
       margin-left: 10px;
       margin-right: 10px; }
-      body .row .photo .pik {
-        max-height: 300px;
-        max-width: 400px; }
   body .frame {
     display: flex;
     flex-flow: row;

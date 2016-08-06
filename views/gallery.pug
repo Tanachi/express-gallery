@@ -5,12 +5,6 @@ html(lang='en')
     title= mainPicture.author
     link(rel='stylesheet', href='/css/styles.css')
   body
-    form( action='/gallery/' + mainPicture.id + '/edit')
-      input(type='submit', value='EDIT')
-    form( method='POST' action='/gallery/' + mainPicture.id)
-      input(type="hidden" name="_method" value="DELETE")
-      input(type='hidden' name="_id" value=mainPicture.id)
-      input(type='submit', value='DELETE')
     div(class = 'frame')
       div(class = 'main')
         h3(class="mainTitle")= 'Uploaded by  ' + mainPicture.author
@@ -21,18 +15,23 @@ html(lang='en')
           div(class='column')
             div(class = 'photo')
               a(href="/gallery/" + otherPictures[0].id)
-                img(src=otherPictures[0].url)
+                img(class = 'pik' src=otherPictures[0].url)
               h3= 'Uploaded by' + otherPictures[0].author
             if otherPictures[1]
               div(class = 'photo')
                 a(href="/gallery/" + otherPictures[1].id)
-                  img(src=otherPictures[1].url id=otherPictures[1].id)
+                  img(class = 'pik' src=otherPictures[1].url id=otherPictures[1].id)
                 h3= 'Uploaded by' + otherPictures[1].author
             if otherPictures[2]
               div(class = 'photo')
                 a(href="/gallery/" + otherPictures[2].id)
-                  img(src=otherPictures[2].url id=otherPictures[2].id)
+                  img(class = 'pik' src=otherPictures[2].url id=otherPictures[2].id)
                 h3= 'Uploaded by' + otherPictures[2].author
-
+    form( action='/gallery/' + mainPicture.id + '/edit')
+      input(type='submit', value='EDIT')
+    form( method='POST' action='/gallery/' + mainPicture.id)
+      input(type="hidden" name="_method" value="DELETE")
+      input(type='hidden' name="_id" value=mainPicture.id)
+      input(type='submit', value='DELETE')
 
 

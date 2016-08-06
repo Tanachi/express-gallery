@@ -224,30 +224,21 @@ app.get(/\/gallery\/\d+/, function(req, res){
   var numID = urlSplit[1];
   var mainPicture;
   var otherPictures = [];
-  Gallery.findOne({
-    where: {
-      id: numID
-    }
-  }).then(function (gallery) {
-    if(gallery !== [])
-      mainPicture = gallery.dataValues;
-    else
-      res.render('404');
-  });
   Gallery.findAll({
     where: {
       id: {
-        $gt: numID
+        $gte: numID
       }
     },
-      limit: 3
+      limit: 4
   }).then(function(other) {
-    if(other[0])
-      otherPictures.push(other[0].dataValues);
+    mainPicture = other[0].dataValues;
     if(other[1])
       otherPictures.push(other[1].dataValues);
     if(other[2])
       otherPictures.push(other[2].dataValues);
+    if(other[3])
+      otherPictures.push(other[3].dataValues);
     res.render('gallery', {mainPicture: mainPicture, otherPictures:otherPictures});
   });
 });
