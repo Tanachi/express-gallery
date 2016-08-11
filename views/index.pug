@@ -9,24 +9,24 @@ html
       p Welcome to our online portfolio, we are small group of passionite designers and architects, looking to change and create amazing digital images to inspire others to follow in our inovative steps. Free Architect WordPress Theme
     div(class= 'buttonBar')
       button(type='button', onclick="location.href='/gallery/new'") New Picture
-      button(type='button', onclick= loginHelp) #{loginStatus}
+      button(type='button', onclick= loginHelp) #{loginStatus.charAt(0).toUpperCase() + loginStatus.slice(1)}
       button(type='button', onclick="location.href='/'") Home
     br
     each picture in pictures
       div(class='row')
         if picture[0]
           div(class = 'photo')
-            a(href="/gallery/" + picture[0].id)
-              img(class = 'pik' src=picture[0].url)
-            p= 'Uploaded by ' + picture[0].author
+            a(href="/gallery/" + picture[0].dataValues.id)
+              img(class = 'pik' src=picture[0].dataValues.url)
+            p= 'Uploaded by ' + picture[0].dataValues.user.username
         if picture[1]
           div(class = 'photo')
-            a(href="/gallery/" + picture[1].id)
-              img(class = 'pik' src=picture[1].url id=picture[1].id)
-            p= 'Uploaded by ' + picture[1].author
+            a(href="/gallery/" + picture[1].dataValues.id)
+              img(class = 'pik' src=picture[1].dataValues.url)
+            p= 'Uploaded by ' + picture[1].dataValues.user.username
         if picture[2]
           div(class = 'photo')
-            a(href="/gallery/" + picture[2].id)
-              img(class = 'pik' src=picture[2].url id=picture[2].id)
-            p= 'Uploaded by ' + picture[2].author
+            a(href="/gallery/" + picture[2].dataValues.id)
+              img(class = 'pik' src=picture[2].dataValues.url)
+            p= 'Uploaded by ' + picture[2].dataValues.user.username
       img(class = 'line' src='./Line-Divider.png')

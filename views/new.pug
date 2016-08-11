@@ -1,3 +1,4 @@
+-var loginHelp = "location.href = '/" + loginStatus + "'"
 doctype html
 html(lang='en')
   head
@@ -5,11 +6,12 @@ html(lang='en')
     title New Gallery Image
     link(rel='stylesheet', href='/css/styles.css')
   body
-    h1 New Gallery Image
+    div(class= 'buttonBar')
+      button(type='button', onclick="location.href='/gallery/new'") New Picture
+      button(type='button', onclick= loginHelp) #{loginStatus.charAt(0).toUpperCase() + loginStatus.slice(1)}
+      button(type='button', onclick="location.href='/'") Home
+    h1= "New Gallery Image by " + author
     form(type= 'x-www-form-urlencoded' method='POST' action='/gallery')
-      h2 Author
-      input(type= "text" name="author")
-      br
       h2 Url
       input(type= "text" name="url")
       br

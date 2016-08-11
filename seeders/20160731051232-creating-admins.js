@@ -17,6 +17,16 @@ up : function (queryInterface, Sequelize) {
       password : 'german',
       createdAt : new Date(),
       updatedAt : new Date()
+    },{
+      username: 'Purify',
+      password : 'sucks',
+      createdAt : new Date(),
+      updatedAt : new Date()
+    },{
+      username: 'Ben',
+      password : 'priests',
+      createdAt : new Date(),
+      updatedAt : new Date()
     }], {});
   },
 

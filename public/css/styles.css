@@ -67,12 +67,17 @@ table {
 body {
   text-decoration: none; }
   body .pik {
-    max-height: 300px;
+    max-height: 250px;
     max-width: 400px; }
   body .buttonBar {
     display: flex;
     flex-direction: row;
     justify-content: center; }
+    body .buttonBar button {
+      width: 22.5%; }
+    body .buttonBar button:hover {
+      border-style: solid;
+      border-width: thick; }
   body .textHeader {
     display: flex;
     flex-direction: row;
@@ -93,6 +98,9 @@ body {
     body .row .photo {
       margin-left: 10px;
       margin-right: 10px; }
+    body .row .pik:hover {
+      border-style: solid;
+      border-width: thick; }
   body .frame {
     display: flex;
     flex-flow: row;

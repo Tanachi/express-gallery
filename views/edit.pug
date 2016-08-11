@@ -1,3 +1,5 @@
+-var loginHelp = "location.href = '/" + loginStatus + "'"
+
 doctype html
 html(lang='en')
 html
@@ -6,15 +8,17 @@ html
     title Edit Image
     link(rel='stylesheet', href='/css/styles.css')
   body
+    div(class= 'buttonBar')
+      button(type='button', onclick="location.href='/gallery/new'") New Picture
+      button(type='button', onclick= loginHelp) #{loginStatus.charAt(0).toUpperCase() + loginStatus.slice(1)}
+      button(type='button', onclick="location.href='/'") Home
+    br
     div(class = 'editImage')
       div(class = 'editFrame')
         img(src=url id=num)
         p= 'Uploaded by ' + author
         p= description
         form(class = 'editForm' type= 'x-www-form-urlencoded' method='POST' action='/gallery')
-          h2 Author
-          input(type= "text" name="author")
-          br
           h2 Url
           input(type= "text" name="url")
           br

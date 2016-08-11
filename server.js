@@ -52,7 +52,7 @@ passport.use(new LocalStrategy(
         return done(null, false);
       }
         var user = {
-        name: "Bob",
+        name: loginInfo.dataValues.username,
         role: "ADMIN",
         color: "orange"
       }
@@ -89,7 +89,9 @@ app.put(/\/gallery\/\d+/, function (req, res) {
   var otherPictures = [];
   var updateInfo = {};
 
-  Gallery.findOne({id: numID}).then(function(gallery) {
+  Gallery.findOne({id: numID, include: [{
+            model: db.User
+          }]}).then(function(gallery) {
     if(gallery !== []){
       if(req.body.url !== ''){
         updateInfo.url = req.body.url;
@@ -97,38 +99,45 @@ app.put(/\/gallery\/\d+/, function (req, res) {
       else{
         updateInfo.url = gallery.dataValues.url;
       }
-      if(req.body.author !== ''){
-        updateInfo.author = req.body.author;
-      }
-      else{
-        updateInfo.author = gallery.dataValues.author;
-      }
       if(req.body.description !== ''){
         updateInfo.description = req.body.description;
       }
       else{
         updateInfo.description = gallery.dataValues.description;
       }
+      updateInfo.author = gallery.User.dataValues.username
       Gallery.update(updateInfo,
-        {where:{id:gallery.dataValues.id}}).then(function(updatedObjects) {
-        mainPicture =updateInfo;
-        Gallery.findAll({
-          where: {
-            id: {
-              $gt: numID
-            }
-          },
-          limit: 3
-        }).then(function(other) {
-          if(other[0])
-            otherPictures.push(other[0].dataValues);
-          if(other[1])
-            otherPictures.push(other[1].dataValues);
-          if(other[2])
-            otherPictures.push(other[2].dataValues);
-        res.render('gallery', {mainPicture: mainPicture,
-                              otherPictures:otherPictures});
-        });
+        {where:{id:gallery.dataValues.id}})
+        .then(function(updatedObjects) {
+          mainPicture = updateInfo;
+          Gallery.findAll({
+            where: {
+              id: {
+                $gt: numID
+              }
+            },
+            limit: 3,
+            include: [{
+              model: db.User,
+              as: 'user',
+              required: true
+            }]
+          }).then(function(other) {
+              if(other[0])
+                otherPictures.push(other[0].dataValues);
+              if(other[1])
+                otherPictures.push(other[1].dataValues);
+              if(other[2])
+                otherPictures.push(other[2].dataValues);
+              var loginStatus;
+              if(req.isAuthenticated() === true)
+                loginStatus = 'logout';
+              else
+                loginStatus = 'login'
+              res.render('gallery', {mainPicture: mainPicture,
+                                  otherPictures:otherPictures,
+                                  loginStatus: loginStatus});
+          });
       });
     }
     else
@@ -153,7 +162,12 @@ app.post('/login', function(req, res, next) {
   })(req, res, next);
 });
 app.get('/login', function(req, res) {
-  res.render('login');
+  var loginStatus;
+  if(req.isAuthenticated() === true)
+                loginStatus = 'logout';
+              else
+                loginStatus = 'login'
+  res.render('login', {loginStatus: loginStatus});
 });
 
 app.get('/logout', function(req, res) {
@@ -180,14 +194,19 @@ app.delete(/\/gallery\/\d+/, isAuthenticated,
 });
 
 app.get('/', function(req, res){
-  Gallery.findAll({order:'id ASC', author: req.body.author,
-                  url: req.body.url,
-                  description: req.body.description})
+  Gallery.findAll({order:'id ASC', include: [{
+      model: db.User,
+      as: 'user',
+      required: true
+    }]})
     .then(function (gallery) {
+      for(var i = 0; i < gallery.length; i++){
+        console.log(gallery[i].dataValues.user.username);
+      }
       var bigPicture;
       var pictureArray = [];
       while(gallery.length > 0){
-       pictureArray.push(gallery.splice(0,3));
+        pictureArray.push(gallery.splice(0,3));
       }
       var loginStatus;
       if(req.isAuthenticated() === true)
@@ -205,13 +224,25 @@ app.get(/\/gallery\/\d+\/edit/, isAuthenticated,function(req, res) {
   Gallery.findOne({
     where: {
       id: numID
-    }
+    },
+    include: [{
+      model: db.User,
+      as: 'user',
+      required: true
+    }]
   }).then(function (gallery) {
-    if(gallery.length !== 0){
-      res.render('edit', { num:gallery.dataValues.id,
-                        url: gallery.dataValues.url,
-                        author: gallery.dataValues.author,
-                        description:gallery.dataValues.description});
+      if(gallery.length !== 0){
+        var loginStatus;
+        if(req.isAuthenticated() === true)
+          loginStatus = 'logout';
+        else
+          loginStatus = 'login'
+        console.log( gallery.dataValues.user.username);
+        res.render('edit', { num:gallery.dataValues.id,
+                          url: gallery.dataValues.url,
+                          author: gallery.dataValues.user.username,
+                          description:gallery.dataValues.description,
+                          loginStatus:loginStatus});
     }
     else{
       res.render('404');
@@ -224,42 +255,58 @@ app.get(/\/gallery\/\d+/, function(req, res){
   var numID = urlSplit[1];
   var mainPicture;
   var otherPictures = [];
-  Gallery.findAll({
+  Gallery.findAll({order:'id ASC',
     where: {
       id: {
         $gte: numID
       }
     },
-      limit: 4
+    limit: 4,
+    include: [{
+      model: db.User,
+      as: 'user',
+      required: true
+    }]
   }).then(function(other) {
     mainPicture = other[0].dataValues;
-    if(other[1])
-      otherPictures.push(other[1].dataValues);
-    if(other[2])
-      otherPictures.push(other[2].dataValues);
-    if(other[3])
-      otherPictures.push(other[3].dataValues);
-    res.render('gallery', {mainPicture: mainPicture, otherPictures:otherPictures});
+    for(var i = 1; i < 4; i++){
+      if(other[i]){
+        otherPictures.push(other[i].dataValues);
+      }
+    }
+    var loginStatus;
+    if(req.isAuthenticated() === true)
+      loginStatus = 'logout';
+    else
+      loginStatus = 'login'
+    res.render('gallery', {mainPicture: mainPicture,
+      otherPictures:otherPictures,
+      loginStatus: loginStatus});
   });
 });
 
 app.get('/gallery/new',isAuthenticated, function(req, res) {
-    res.render('new');
+    var loginStatus;
+      if(req.isAuthenticated() === true)
+        loginStatus = 'logout';
+      else
+        loginStatus = 'login'
+    res.render('new', {loginStatus:loginStatus, author: req.user.name});
   });
 
 
 
-app.get('/secret', isAuthenticated,
-  function (req, res) {
-    res.render('secret');
-  }
-);
 app.post('/gallery', function (req, res) {
   Gallery.create({ author: req.body.author,
                   url: req.body.url,
                   description:req.body.description})
     .then(function (gallery) {
-      res.render('gallery', {mainPicture:req.body});
+      var loginStatus;
+        if(req.isAuthenticated() === true)
+          loginStatus = 'logout';
+        else
+          loginStatus = 'login';
+      res.render('gallery', {mainPicture:req.body, loginStatus: loginStatus});
   });
 });
 var server = app.listen(3000, function(){

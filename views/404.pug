@@ -1,3 +1,5 @@
+-var loginHelp = "location.href = '/" + loginStatus + "'"
+
 doctype html
 html(lang='en')
 html
@@ -5,6 +7,11 @@ html
     meta(charset='UTF-8')
     title = '404'
   body
+    div(class= 'buttonBar')
+      button(type='button', onclick="location.href='/gallery/new'") New Picture
+      button(type='button', onclick= loginHelp) #{loginStatus.charAt(0).toUpperCase() + loginStatus.slice(1)}
+      button(type='button', onclick="location.href='/'") Home
+    br
     h1 404
     h1 Page not Found
     p

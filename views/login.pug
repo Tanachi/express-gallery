@@ -1,3 +1,5 @@
+-var loginHelp = "location.href = '/" + loginStatus + "'"
+
 doctype html
 html(lang='en')
   head
@@ -5,6 +7,10 @@ html(lang='en')
     title Login
     link(rel='stylesheet', href='/css/styles.css')
   body
+    div(class= 'buttonBar')
+      button(type='button', onclick="location.href='/gallery/new'") New Picture
+      button(type='button', onclick= loginHelp) #{loginStatus.charAt(0).toUpperCase() + loginStatus.slice(1)}
+      button(type='button', onclick="location.href='/'") Home
     form( method='POST' action='/login')
       input(type="text" name="username" value="username")
       input(type='password' name="password" value="password")
