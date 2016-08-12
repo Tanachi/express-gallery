@@ -200,9 +200,6 @@ app.get('/', function(req, res){
       required: true
     }]})
     .then(function (gallery) {
-      for(var i = 0; i < gallery.length; i++){
-        console.log(gallery[i].dataValues.user.username);
-      }
       var bigPicture;
       var pictureArray = [];
       while(gallery.length > 0){
@@ -237,7 +234,6 @@ app.get(/\/gallery\/\d+\/edit/, isAuthenticated,function(req, res) {
           loginStatus = 'logout';
         else
           loginStatus = 'login'
-        console.log( gallery.dataValues.user.username);
         res.render('edit', { num:gallery.dataValues.id,
                           url: gallery.dataValues.url,
                           author: gallery.dataValues.user.username,
@@ -269,9 +265,12 @@ app.get(/\/gallery\/\d+/, function(req, res){
     }]
   }).then(function(other) {
     mainPicture = other[0].dataValues;
+    mainPicture.username = other[0].dataValues.user.username;
     for(var i = 1; i < 4; i++){
       if(other[i]){
-        otherPictures.push(other[i].dataValues);
+        var otherValues = other[i].dataValues;
+        otherValues.username = other[i].dataValues.user.username;
+        otherPictures.push(otherValues);
       }
     }
     var loginStatus;
@@ -296,17 +295,21 @@ app.get('/gallery/new',isAuthenticated, function(req, res) {
 
 
 
-app.post('/gallery', function (req, res) {
-  Gallery.create({ author: req.body.author,
-                  url: req.body.url,
-                  description:req.body.description})
+app.post('/gallery', isAuthenticated, function (req, res) {
+  Admins.findOne({where:{username:req.user.name}}).then(function(user) {
+    Gallery.create({url: req.body.url,
+                  description:req.body.description, user_id:user.dataValues.id})
     .then(function (gallery) {
       var loginStatus;
+        var mainPicture = gallery.dataValues;
+        mainPicture.username = req.user.name;
         if(req.isAuthenticated() === true)
           loginStatus = 'logout';
         else
           loginStatus = 'login';
-      res.render('gallery', {mainPicture:req.body, loginStatus: loginStatus});
+      res.render('gallery', {mainPicture:mainPicture,
+        loginStatus: loginStatus});
+    });
   });
 });
 var server = app.listen(3000, function(){
